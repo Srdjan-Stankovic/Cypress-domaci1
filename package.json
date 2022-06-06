@@ -1,0 +1,23 @@
+{
+  "name": "domaci1-srdjanstankovic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Srdjan-Stankovic/Cypress-domaci1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Srdjan-Stankovic/Cypress-domaci1/issues"
+  },
+  "homepage": "https://github.com/Srdjan-Stankovic/Cypress-domaci1#readme",
+  "devDependencies": {
+    "cypress": "^10.0.2"
+  }
+}
