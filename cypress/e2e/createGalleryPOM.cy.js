@@ -6,6 +6,8 @@ const {loginPage} = require('../page_objects/loginPage');
 
 describe('create gallery POM', () => {
 
+    const validImage = 'https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500';
+
     const userData = {
         email: 'srdjanstankovic195@gmail.com',
         password: '12341234'
@@ -26,7 +28,7 @@ describe('create gallery POM', () => {
 
     it('Create gallery without entering a title', () => {
         createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type('https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+        createGalleryPage.imageInputField.type(validImage);
         createGalleryPage.submitBtn.click();
         cy.url().should('include', '/create')
     })
@@ -66,7 +68,7 @@ describe('create gallery POM', () => {
 
     xit('successfully create a gallery without a description', () => {
         createGalleryPage.titleInputfield.type('nova galerija');
-        createGalleryPage.imageInputField.type('https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+        createGalleryPage.imageInputField.type(validImage);
         createGalleryPage.submitBtn.click();
         cy.url().should('not.include', '/create')
     })
@@ -74,7 +76,7 @@ describe('create gallery POM', () => {
     xit('successfully create a gallery', () => {
         createGalleryPage.titleInputfield.type('nova galerija');
         createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type('https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+        createGalleryPage.imageInputField.type(validImage);
         createGalleryPage.imageInputField.invoke('val').should('contains', '.jpeg' | '.jpg' | '.png');
         createGalleryPage.submitBtn.click();
         cy.url().should('not.include', '/create')
