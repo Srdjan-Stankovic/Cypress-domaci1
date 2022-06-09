@@ -7,6 +7,7 @@ const {loginPage} = require('../page_objects/loginPage');
 describe('create gallery POM', () => {
 
     const validImage = 'https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500';
+    const gifImage = 'https://idearocketanimation.com/app/uploads/2017/04/foundergif.gif';
 
     const userData = {
         email: 'srdjanstankovic195@gmail.com',
@@ -43,7 +44,7 @@ describe('create gallery POM', () => {
     it('create gallery with incorrect image format', () => {
         createGalleryPage.titleInputfield.type('nova galerija');
         createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type('https://idearocketanimation.com/app/uploads/2017/04/foundergif.gif');
+        createGalleryPage.imageInputField.type(gifImage);
         createGalleryPage.submitBtn.click();
         cy.url().should('include', '/create')
     })
