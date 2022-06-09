@@ -1,0 +1,10 @@
+{
+    "Login": {
+        "emailInput": "#email",
+        "passwordInput": "#password",
+        "submitBtn": "button"
+    },
+    "Navigation": {
+        "actionButton": ".nav-link"
+    }
+}

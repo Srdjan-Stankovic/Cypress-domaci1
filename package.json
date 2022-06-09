@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Srdjan-Stankovic/Cypress-domaci1#readme",
   "devDependencies": {
+    "@faker-js/faker": "^7.1.0",
     "cypress": "^10.0.2"
   }
 }
