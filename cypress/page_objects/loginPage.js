@@ -19,6 +19,14 @@ class LoginPage {
         return cy.get('.nav-link').eq(3);
     }
 
+    get errorMessage() {
+        return cy.get('p[class="alert alert-danger"]');
+    }
+
+    get loginTitle() {
+        return cy.get('h1');
+    }
+
     login(email, password) {
         this.emailInput.type(email)
         this.passwordInput.type(password)

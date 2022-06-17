@@ -4,15 +4,15 @@ class CreateGalleryPage {
         return cy.get('.nav-link').eq(2);
     }
 
-    get titleInputfield() {
+    get titleInput() {
         return cy.get('#title');
     }
 
-    get descriptionInputField() {
+    get descriptionInput() {
         return cy.get('#description');
     }
 
-    get imageInputField() {
+    get imageInput() {
         return cy.get("input[type='url']");
     }
 
@@ -20,12 +20,30 @@ class CreateGalleryPage {
         return cy.get("input[type='url']").eq(1);
     }
 
+    get galleryInputParent() {
+        return cy.get("div[class = 'form-group']").last();
+    }
+
     get shiftUpBtn() {
-        return cy.get('.input-buttons').eq(0);
+        return this.galleryInputParent
+            .find('button')
+            .eq(1)
     }
 
     get shiftDownBtn() {
-        return cy.get('.input-buttons').eq(1);
+        return this.galleryInputParent
+            .find('button')
+            .last()
+    }
+
+    get deleteImageButton() {
+        return this.galleryInputParent
+            .find('button')
+            .first()
+    }
+
+    get createGalleryTitle() {
+        return cy.get('h1');
     }
 
     get addImageBtn() {
@@ -40,10 +58,16 @@ class CreateGalleryPage {
         return cy.get('button[type="submit"]').eq(1);
     }
 
-    get deleteImageButton() {
-        return cy.get('.input-buttons').eq(0);
+    get errorMessage() {
+        return cy.get('p[class = "alert alert-danger"]')
     }
 
+    createGallery(title, desc, image) {
+        this.titleInput.type(title)
+        this.descriptionInput.type(desc)
+        this.imageInput.type(image)
+        this.submitBtn.click()
+    }
 }
 
 export const createGalleryPage = new CreateGalleryPage();

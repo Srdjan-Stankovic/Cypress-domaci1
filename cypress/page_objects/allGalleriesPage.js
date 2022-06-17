@@ -25,7 +25,7 @@ class AllGalleriesPage {
     }
 
     get authorNameBtn() {
-        return cy.get('.box-title').eq(2);
+        return cy.get('.box-title').eq(1);
     }
 
     get loadMoreBtn() {
@@ -34,6 +34,14 @@ class AllGalleriesPage {
 
     get noGalleriesTitle() {
         return cy.get('h4');
+    }
+
+    get authorTitle() {
+        return cy.get('h5').eq(0);
+    }
+
+    get galleriesOfTitle() {
+        return cy.get('h1');
     }
 }
 

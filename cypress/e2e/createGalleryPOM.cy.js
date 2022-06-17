@@ -1,52 +1,59 @@
 /// <reference types="Cypress" />
 
 const {createGalleryPage} = require("../page_objects/createGalleryPage")
-const {loginPage} = require('../page_objects/loginPage');
+const faker = require('@faker-js/faker');
 
 
 describe('create gallery POM', () => {
 
-    const validImage = 'https://images.pexels.com/photos/302743/pexels-photo-302743.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500';
-    const gifImage = 'https://idearocketanimation.com/app/uploads/2017/04/foundergif.gif';
-
-    const userData = {
-        email: 'srdjanstankovic195@gmail.com',
-        password: '12341234'
+    let galleryId;
+    let galleryData = {
+        title: faker.name.firstName(),
+        description: faker.name.firstName(),
+        image: faker.image.abstract() + '.jpg',
+        invalidImage: 'https://idearocketanimation.com/app/uploads/2017/04/foundergif.gif'
     }
 
-    beforeEach('visit create gallery page', () => {
-        cy.visit('/')
-        loginPage.loginBtn.click();
-        loginPage.login(
-            userData.email,
-            userData.password
-        );
-        cy.url().should('not.include', '/login');
-        cy.visit('https://gallery-app.vivifyideas.com/create');
+    beforeEach('login via backend', () => {
+        cy.loginViaBackend() 
+        cy.visit('/create');
         cy.url().should('include', '/create');
     })
        
 
     it('Create gallery without entering a title', () => {
-        createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type(validImage);
+        createGalleryPage.descriptionInput.type(galleryData.description);
+        createGalleryPage.imageInput.type(galleryData.image);
         createGalleryPage.submitBtn.click();
-        cy.url().should('include', '/create')
+        cy.url().should('include', '/create');
+        createGalleryPage.submitBtn.should('be.visible');
     })
 
     it('Create gallery without adding an image', () => {
-        createGalleryPage.titleInputfield.type('nova galerija');
-        createGalleryPage.descriptionInputField.type('nova galerija123');
+        createGalleryPage.titleInput.type(galleryData.title);
+        createGalleryPage.descriptionInput.type(galleryData.description);
         createGalleryPage.submitBtn.click();
-        cy.url().should('include', '/create')
+        cy.url().should('include', '/create');
+        createGalleryPage.createGalleryTitle.should('be.visible');
     })
 
     it('create gallery with incorrect image format', () => {
-        createGalleryPage.titleInputfield.type('nova galerija');
-        createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type(gifImage);
+        cy.intercept({
+            method: 'POST',
+            url: 'https://gallery-api.vivifyideas.com/api/galleries'
+        }).as('invalidImageFormat')
+
+        createGalleryPage.titleInput.type(galleryData.title);
+        createGalleryPage.descriptionInput.type(galleryData.description);
+        createGalleryPage.imageInput.type(galleryData.invalidImage);
         createGalleryPage.submitBtn.click();
+        cy.wait('@invalidImageFormat').then(interception => {
+            expect(interception.response.statusCode).to.exist
+            expect(interception.response.statusCode).eq(422)
+        })
         cy.url().should('include', '/create')
+        createGalleryPage.errorMessage.should('be.visible')
+            .and('have.text', 'Wrong format of image');
     })
 
     it('ensure add image button works', () => {
@@ -58,28 +65,77 @@ describe('create gallery POM', () => {
         createGalleryPage.addImageBtn.click();
         createGalleryPage.imageInputField2.should('be.visible');
         createGalleryPage.deleteImageButton.click();
-        createGalleryPage.imageInputField.should('have.length', 1);
+        createGalleryPage.imageInput.should('have.length', 1);
+        createGalleryPage.imageInputField2.should('not.exist');
     })
 
     it('ensure cancel button works', () => {
+        cy.intercept({
+            method: 'GET',
+            url: 'https://gallery-api.vivifyideas.com/api/galleries?page=1&term='
+        }).as('cancelBtn')
+
         createGalleryPage.cancelBtn.click();
+        cy.wait('@cancelBtn').then(interception => {
+            expect(interception.response.statusCode).to.exist
+            expect(interception.response.statusCode).eq(200)
+        })
         cy.url().should('not.include', '/create')
     })
 
 
     xit('successfully create a gallery without a description', () => {
-        createGalleryPage.titleInputfield.type('nova galerija');
-        createGalleryPage.imageInputField.type(validImage);
+        cy.intercept({
+            method: 'POST',
+            url: 'https://gallery-api.vivifyideas.com/api/galleries'
+        }).as('createGallery')
+
+        createGalleryPage.titleInput.type(galleryData.title);
+        createGalleryPage.imageInput.type(galleryData.image);
         createGalleryPage.submitBtn.click();
+        cy.wait('@createGallery').then(interception => {
+            expect(interception.response.statusCode).to.exist
+            expect(interception.response.statusCode).eq(201)
+        })
         cy.url().should('not.include', '/create')
     })
 
-    xit('successfully create a gallery', () => {
-        createGalleryPage.titleInputfield.type('nova galerija');
-        createGalleryPage.descriptionInputField.type('nova galerija123');
-        createGalleryPage.imageInputField.type(validImage);
-        createGalleryPage.imageInputField.invoke('val').should('contains', '.jpeg' | '.jpg' | '.png');
-        createGalleryPage.submitBtn.click();
-        cy.url().should('not.include', '/create')
+    // xit('successfully create a gallery with a jpg image', () => {
+    //     createGalleryPage.createGallery(
+    //         galleryData.title,
+    //         galleryData.description,
+    //         galleryData.image
+    //     )
+    //     console.log(createGalleryPage.imageInput.invoke('val'));
+    //     createGalleryPage.imageInput.invoke('val').should('contains', '.jpg')
+    //     createGalleryPage.submitBtn.click();
+    //     cy.url().should('not.include', '/create')
+    // })
+
+    xit('create gallery', () => {
+        cy.intercept({
+            method: 'POST',
+            url: 'https://gallery-api.vivifyideas.com/api/galleries'
+        }).as('createGallery')
+
+        createGalleryPage.createGallery(
+            galleryData.title,
+            galleryData.description,
+            galleryData.image
+        )
+
+        cy.wait('@createGallery').then(interception => {
+            galleryId = interception.response.body.id
+
+            expect(interception.response.body.title).eq(galleryData.title)
+            cy.visit('/galleries/' + galleryId)
+            cy.get('h1').should('have.text', galleryData.title)
+        })
     })
+
+    //ifContainsString(string) {
+      //  createGalleryPage.imageInputField.invoke('val').should('contains', string);
+    //}
 })
+
+

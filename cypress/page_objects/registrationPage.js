@@ -32,12 +32,20 @@ class RegistrationPage {
         return cy.get('button');
     }
 
-    register(firstName, lastName, email, password, confirmPassword) {
+    get errorMessage() {
+        return cy.get('p[class="alert alert-danger"]');
+    }
+
+    get registerHeading() {
+        return cy.get('h1');
+    }
+
+    register(firstName, lastName, email, password) {
         this.firstNameInput.type(firstName);
         this.lastNameInput.type(lastName);
         this.emailInput.type(email);
         this.passwordInput.type(password);
-        this.passwordConfirmation.type(confirmPassword)
+        this.passwordConfirmation.type(password)
         this.termsCheckbox.click();
         this.submitBtn.click();
     }
